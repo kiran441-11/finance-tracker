@@ -50,6 +50,7 @@ class MainActivity : Activity() {
 
     private var selectedMonth = Calendar.getInstance().get(Calendar.MONTH)
     private var selectedYear = Calendar.getInstance().get(Calendar.YEAR)
+    private var settingMonthSelection = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,20 +75,24 @@ class MainActivity : Activity() {
             android.R.layout.simple_spinner_dropdown_item,
             months
         )
+        settingMonthSelection = true
         monthSpinner.setSelection(selectedMonth)
-
+        settingMonthSelection = false
+        
         monthSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-
+        
                 override fun onItemSelected(
                     parent: AdapterView<*>?,
                     view: View?,
                     position: Int,
                     id: Long
                 ) {
-                    selectedMonth = position
-                    showDashboard()
+                    if (!settingMonthSelection && selectedMonth != position) {
+                        selectedMonth = position
+                        showDashboard()
+                    }
                 }
             }
 
@@ -300,7 +305,11 @@ class MainActivity : Activity() {
             showDashboard()
         })
 
-        setContentView(root)
+       val scrollView = ScrollView(this)
+        scrollView.isFillViewport = true
+        scrollView.addView(root)
+        
+        setContentView(scrollView)
     }
 
     private fun showAddTransaction() {
@@ -682,13 +691,25 @@ class MainActivity : Activity() {
         }
     }
 
-    private fun button(text: String, action: () -> Unit): Button {
-        return Button(this).apply {
-            this.text = text
-            textSize = 15f
-            setOnClickListener { action() }
+private fun button(text: String, action: () -> Unit): Button {
+    return Button(this).apply {
+        this.text = text
+        textSize = 15f
+        isAllCaps = false
+        isClickable = true
+        isFocusable = true
+        setOnClickListener {
+            action()
+        }
+
+        layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            58
+        ).apply {
+            setMargins(0, 8, 0, 8)
         }
     }
+}
 
     private fun money(value: Double): String {
         return String.format(Locale.getDefault(), "%.2f", value)
