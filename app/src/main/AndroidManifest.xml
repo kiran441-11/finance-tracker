@@ -5,7 +5,7 @@
         android:allowBackup="false"
         android:label="Finance Tracker"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@android:style/Theme.Material.Light.NoActionBar">
 
         <activity
             android:name=".MainActivity"
